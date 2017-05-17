@@ -334,7 +334,11 @@ id|password|last_login|is_superuser|first_name|last_name|email|is_staff|is_activ
 3|pbkdf2_sha256$36000$jmW5uR9z4M7h$RbE7XjX8vx3KYzgJ/u47sMWclzagEdS53XZAd5QO15s=||1|||c@d.com|1|1|2017-05-14 23:55:04.083796|moo
 
 sqlite> .exit
+```
 
+### Week #3
+
+```
 shell> pwd
 ~/class101/project
 
@@ -482,6 +486,33 @@ shell> pwd
 ~/class101/project
 
 shell> python manage.py runserver
+
+```
+
+###  Getting ready for Openshift
+
+```
+shell> pwd
+~/class101/project
+
+shell> mv project/wsgi.py .
+
+# change project/settings.py, this one variable
+shell> egrep wsgi project/settings.py
+WSGI_APPLICATION = 'wsgi.application'
+
+# Fix health/liveliness probe for Openshift
+shell> cat project/urls.py
+from django.conf import settings
+from django.conf.urls import include, url
+from django.contrib import admin
+from django.http import HttpResponse
+
+urlpatterns = [
+    url(r'^$', lambda request:HttpResponse(status=200)),
+    url(r'^dashboard/', include('dashboard.urls', namespace='dashboard')),
+    url(r'^admin/', admin.site.urls),
+]
 
 ```
 
