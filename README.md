@@ -338,10 +338,23 @@ sqlite> .exit
 shell> pwd
 ~/class101/project
 
+shell> cat dashboard/admin.py
+# -*- coding: utf-8 -*-
+from __future__ import unicode_literals
+
+from django.contrib import admin
+from .models import Server
+
+class ServerAdmin(admin.ModelAdmin):
+    pass
+admin.site.register(Server, ServerAdmin)
+
 shell> python manage.py runserver
 
 # Browse to /admin
 # Add some data for the dashboard app, server names and ips - use fake data
+# Test the error checking on the form: can you add a garbage ip, do you get an error?
+# does it check for uniqueness?
 
 # Other cool stuff
 shell> pwd
@@ -349,7 +362,6 @@ shell> pwd
 
 shell> python manage.py shell
 >>> from django.contrib.auth.models import User as U
->>> u = U.objects.objects.all()
 >>> u = U.objects.all()
 >>> for ea in u:
 ...     ea.email
@@ -360,9 +372,11 @@ shell> python manage.py shell
 >>>
 >>> from dashboard.models import Server
 >>>
->>> Server.objects.all()
+>>> s = Server.objects.all()
+>>> for ea in s:
+>>>     print('{}:{}'.format(ea.name, ea.ip))
+...
 >>>
-
 
 # Let's work on the view
 # Make your  project/urls.py look like this
