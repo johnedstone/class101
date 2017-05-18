@@ -169,7 +169,7 @@ git push origin master
         ~/class101
 
         shell> echo '*pyc' >> .gitignore
-        shell> echo 'db.sqlited' >> .gitignore
+        shell> echo 'db.sqlite3' >> .gitignore
 
         # Maybe this
         shell> git rm -f project/project/*.pyc
