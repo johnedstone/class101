@@ -489,7 +489,9 @@ shell> python manage.py runserver
 
 ```
 
-###  Getting ready for Openshift
+###  Week #5 - Openshift
+
+* Make sure you move wsgi.py up one directory
 
 ```
 shell> pwd
@@ -497,11 +499,21 @@ shell> pwd
 
 shell> mv project/wsgi.py .
 
-# change project/settings.py, this one variable
+```
+
+* Make sure your settings file knows that you've moved wsgi.py up one directory
+
+```
+# change project/settings.py, this one variable to look like this
 shell> egrep wsgi project/settings.py
 WSGI_APPLICATION = 'wsgi.application'
 
-# Fix health/liveliness probe for Openshift
+```
+
+* Fix health/liveliness probe for Openshift
+
+```
+# Your urls.py file should look like this
 shell> cat project/urls.py
 from django.conf import settings
 from django.conf.urls import include, url
@@ -516,4 +528,125 @@ urlpatterns = [
 
 ```
 
-##### vim: ai et ts=4 sts=4 sw=4 nu ru
+
+* Add gunicorn to requirements.txt
+
+```
+shell> pwd
+shell> ~/class101/project
+
+echo gunicorn >> requirements.txt
+
+# If you haven't sourced you file, remember to do this
+shell> source ~/.virtualenvs/class101/bin/activate
+
+shell> pip install --proxy <ip:port> -r requirements.txt
+  ....
+  Successfully installed gunicorn-19.7.1
+
+```
+* Get templates
+
+```
+# Set up directory for templates
+shell> pwd
+~/class101/project
+
+shell> mkdir -p openshift/templates
+
+shell> wget <fill in here>
+
+```
+
+* Update project/settings.py to allow for databases other than sqlite
+
+```
+# Remove these lines
+DATABASES = {
+    'default': {
+        'ENGINE': 'django.db.backends.sqlite3',
+        'NAME': os.path.join(BASE_DIR, 'db.sqlite3'),
+    }
+}
+
+# Add these lines
+from . import database
+
+DATABASES = {
+    'default': database.config()
+}
+
+# add the file database.py in the same dir as settings.py
+shell> cat project/database.py
+import os
+
+from django.conf import settings
+
+
+engines = {
+    'sqlite': 'django.db.backends.sqlite3',
+    'postgresql': 'django.db.backends.postgresql_psycopg2',
+}
+
+
+def config():
+    service_name = os.getenv('DATABASE_SERVICE_NAME', '').upper().replace('-', '_')
+    if service_name:
+        engine = engines.get(os.getenv('DATABASE_ENGINE'), engines['sqlite'])
+    else:
+        engine = engines['sqlite']
+    name = os.getenv('DATABASE_NAME')
+    if not name and engine == engines['sqlite']:
+        name = os.path.join(settings.BASE_DIR, 'db.sqlite3')
+    return {
+        'ENGINE': engine,
+        'NAME': name,
+        'USER': os.getenv('DATABASE_USER'),
+        'PASSWORD': os.getenv('DATABASE_PASSWORD'),
+        'HOST': os.getenv('{}_SERVICE_HOST'.format(service_name)),
+        'PORT': os.getenv('{}_SERVICE_PORT'.format(service_name)),
+    }
+
+# vim: ai et ts=4 sts=4 sw=4 nu ru
+
+shell> pwd
+~/class101/project
+shell> tree -I "*pyc"
+.
+|-- dashboard
+|   |-- admin.py
+|   |-- apps.py
+|   |-- __init__.py
+|   |-- migrations
+|   |   |-- 0001_initial.py
+|   |   `-- __init__.py
+|   |-- models.py
+|   |-- templates
+|   |   `-- dashboard
+|   |       `-- server_list.html
+|   |-- tests.py
+|   |-- urls.py
+|   `-- views.py
+|-- db.sqlite3
+|-- manage.py
+|-- openshift
+|   `-- templates
+|       |-- class101.yaml
+|       `-- promotion_restapi_postgresql.yaml
+|-- project
+|   |-- database.py
+|   |-- __init__.py
+|   |-- settings.py
+|   `-- urls.py
+|-- requirements.txt
+`-- wsgi.py
+
+```
+
+* Instructions from Chris will go here
+
+```
+shell> 
+```
+
+###### vim: ai et ts=4 sts=4 sw=4 nu ru
