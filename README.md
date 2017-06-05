@@ -536,14 +536,12 @@ shell> pwd
 shell> ~/class101/project
 
 shell> echo gunicorn >> requirements.txt
-shell> echo "whitenoise" >> requirements.txt
+shell> echo whitenoise >> requirements.txt
 
 # If you haven't sourced you file, remember to do this
 shell> source ~/.virtualenvs/class101/bin/activate
 
 shell> pip install --proxy <ip:port> -r requirements.txt
-  ....
-  Successfully installed gunicorn-19.7.1
 
 ```
 * Get templates
@@ -697,9 +695,7 @@ class101-1-build   0/1       Completed   0          12m
 
 shell> oc rsh class101-1-3k1ec
 (app-root)sh-4.2$
-(app-root)sh-4.2$ python manage.py createsuperuser
-Username: boohoo
-Email address: a@b.com
+(app-root)sh-4.2$ python manage.py createsuperuser --username=boohoo --email=a@b.com
 Password:
 Password (again):
 Superuser created successfully.
@@ -710,6 +706,7 @@ NAME       HOST/PORT                                         PATH      SERVICES 
 class101   class101-youruserid-class101.fqdn             class101   <all>
 
 # Open your browser and navigate to the above /admin and add some IPs
+# Navigate then to /dashboard/server-list/
 
 ```
 
