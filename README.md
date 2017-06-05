@@ -491,7 +491,7 @@ shell> python manage.py runserver
 
 ###  Week #5 - Openshift
 
-#### If you simply want to use johnedstone's class101 project, download these templates and skip to below where it says `oc login`
+#### If you simply want to use johnedstone's class101 project, download these templates and skip to below where it says "Start openshift project": `oc login ... `
 
 ```
 # Set up directory for templates
@@ -664,7 +664,7 @@ shell> git commit -am "files for openhsift updated"
 shell> git push
 ```
 
-* Start openshift project, app, etc.
+#### Start openshift project, app, etc.
 
 ```
 shell> oc login https://fqdn:8443 -u youruserid
@@ -725,6 +725,7 @@ class101   class101-youruserid-class101.fqdn             class101   <all>
 shell> oc project
 shell> oc delete project <your project name>
 ``
+```
 
 
 * Instructions from Chris will go here
