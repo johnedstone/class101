@@ -491,6 +491,24 @@ shell> python manage.py runserver
 
 ###  Week #5 - Openshift
 
+#### If you simply want to use johnedstone's class101 project, download these templates and skip to below where it says `oc login`
+
+```
+# Set up directory for templates
+shell> pwd
+~/class101/project
+
+shell> mkdir -p openshift/templates
+
+shell> curl -k -x <proxyip:port>  https://raw.githubusercontent.com/johnedstone/class101/master/project/openshift/templates/class101.yaml > openshift/templates/class101.yaml
+shell> curl -k -x <proxyip:port>  https://raw.githubusercontent.com/johnedstone/class101/master/project/openshift/templates/class101_postgresql.yaml > openshift/templates/class101_postgresql.yaml
+
+```
+
+#### If you want to update your project so it will run in Openshift, follow these instructions here.
+
+* Update the above templates with your git http repo url
+
 * Make sure you move wsgi.py up one directory
 
 ```
@@ -529,31 +547,16 @@ urlpatterns = [
 ```
 
 
-* Add gunicorn and whitenoise to requirements.txt
+* Add gunicorn,psycopg2, and whitenoise to requirements.txt for production
 
 ```
 shell> pwd
 shell> ~/class101/project
+shell> cp requirements.txt requirements_local.txt
 
 shell> echo gunicorn >> requirements.txt
+shell> echo psycopg2 >> requirements.txt
 shell> echo whitenoise >> requirements.txt
-
-# If you haven't sourced you file, remember to do this
-shell> source ~/.virtualenvs/class101/bin/activate
-
-shell> pip install --proxy <ip:port> -r requirements.txt
-
-```
-* Get templates
-
-```
-# Set up directory for templates
-shell> pwd
-~/class101/project
-
-shell> mkdir -p openshift/templates
-
-shell> wget <fill in here>
 
 ```
 
@@ -664,8 +667,14 @@ shell> git push
 * Start openshift project, app, etc.
 
 ```
+shell> oc login https://fqdn:8443 -u youruserid
 shell> oc new-project youruserid-class101
 shell> export PIP_PROXY=<ip:port>; oc new-app --param=PIP_PROXY=${PIP_PROXY} -f openshift/templates/class101.yaml
+
+# Note errors
+shell> oc delete all --all
+# Start again with
+shell> oc new-app ....
 
 shell> oc get pods
 shell> oc logs -f bc/class101
@@ -709,6 +718,13 @@ class101   class101-youruserid-class101.fqdn             class101   <all>
 # Navigate then to /dashboard/server-list/
 
 ```
+
+* When you are all done, delete your project.  Thank you!
+```
+# show your projectname
+shell> oc project
+shell> oc delete project <your project name>
+``
 
 
 * Instructions from Chris will go here

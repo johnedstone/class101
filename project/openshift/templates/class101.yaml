@@ -96,8 +96,6 @@ objects:
       spec:
         containers:
         - env:
-          - name: APP_MODULE
-            value: ${APP_MODULE}
           - name: ALLOWED_HOSTS
             value: ${ALLOWED_HOSTS}
           - name: DEBUG
@@ -106,16 +104,10 @@ objects:
             value: ${APP_CONFIG}
           - name: DJANGO_SECRET_KEY
             value: ${DJANGO_SECRET_KEY}
-          - name: OPENSHIFT_MASTER_POC
-            value: ${OPENSHIFT_MASTER_POC}
-          - name: OPENSHIFT_MASTER_NP
-            value: ${OPENSHIFT_MASTER_NP}
-          - name: OPENSHIFT_MASTER_PRD
-            value: ${OPENSHIFT_MASTER_PRD}
           image: ' '
           livenessProbe:
             httpGet:
-              path: / 
+              path: /
               port: 8080
             initialDelaySeconds: 30
             timeoutSeconds: 3
@@ -197,9 +189,6 @@ parameters:
   name: ALLOWED_HOSTS
   displayName: Allowed Hosts
   value: '*'
-- description: APP_MODULE is an alternative wsgi
-  name: APP_MODULE
-  displayName: APP_MODULE
 - description: Upgrade pip to the latest
   name: UPGRADE_PIP_TO_LATEST
   displayName: Upgrade pip to latest

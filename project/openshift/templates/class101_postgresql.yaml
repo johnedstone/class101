@@ -1,15 +1,15 @@
 apiVersion: v1
 kind: Template
 labels:
-  template: promotion-restapi
+  template: class101
 message: |-
-    Templates presents REST API mock data for promotions
+    Templates for class101
 metadata:
   annotations:
-    description: 'Promotion REST API mock data'
-    tags: quickstart,python,django,restapi
+    description: 'class101 demo'
+    tags: quickstart,python,django
     iconClass: icon-python
-  name: promotion-restapi
+  name: class101
 objects:
 - apiVersion: v1
   kind: Secret
@@ -63,8 +63,6 @@ objects:
         ref: ${SOURCE_REPOSITORY_REF}
         uri: ${SOURCE_REPOSITORY_URL}
       type: Git
-      sourceSecret:
-        name: ${GITHUB_WEBHOOK_SECRET}
     strategy:
       sourceStrategy:
         env:
@@ -121,33 +119,27 @@ objects:
               secretKeyRef:
                 key: databasePassword
                 name: ${NAME}
-          - name: APP_CONFIG
-            value: ${APP_CONFIG}
-          - name: DJANGO_SECRET_KEY
-            value: ${DJANGO_SECRET_KEY}
           - name: ALLOWED_HOSTS
             value: ${ALLOWED_HOSTS}
           - name: DEBUG
             value: ${DEBUG}
-          - name: OPENSHIFT_MASTER_POC
-            value: ${OPENSHIFT_MASTER_POC}
-          - name: OPENSHIFT_MASTER_NP
-            value: ${OPENSHIFT_MASTER_NP}
-          - name: OPENSHIFT_MASTER_PRD
-            value: ${OPENSHIFT_MASTER_PRD}
+          - name: APP_CONFIG
+            value: ${APP_CONFIG}
+          - name: DJANGO_SECRET_KEY
+            value: ${DJANGO_SECRET_KEY}
           image: ' '
           livenessProbe:
             httpGet:
-              path: /liveness/
+              path: /
               port: 8080
             initialDelaySeconds: 30
             timeoutSeconds: 3
-          name: promotion-restapi
+          name: class101
           ports:
           - containerPort: 8080
           readinessProbe:
             httpGet:
-              path: /readiness/
+              path: /
               port: 8080
             initialDelaySeconds: 3
             timeoutSeconds: 3
@@ -158,7 +150,7 @@ objects:
     - imageChangeParams:
         automatic: true
         containerNames:
-        - promotion-restapi
+        - class101
         from:
           kind: ImageStreamTag
           name: ${NAME}:latest
@@ -253,7 +245,7 @@ parameters:
   displayName: Name
   name: NAME
   required: true
-  value: promotion-restapi
+  value: class101
 - description: The OpenShift Namespace where the ImageStream resides.
   displayName: Namespace
   name: NAMESPACE
@@ -268,7 +260,7 @@ parameters:
   displayName: Git Repository URL
   name: SOURCE_REPOSITORY_URL
   required: true
-  value: 'git@github.com:EliLillyCo/GIS_IIHS_PaaS_Self-Service.git'
+  value: 'https://github.com/johnedstone/class101.git'
 - description: Set this to a branch name, tag or other ref of your repository if you
     are not using the default branch.
   displayName: Git Reference
@@ -277,16 +269,11 @@ parameters:
     of your repository.
   displayName: Context Directory
   name: CONTEXT_DIR
-  value: 'rest_api/promotion_api/promotion_project'
+  value: 'project'
 - description: The exposed hostname that will route to the Django service, if left
     blank a value will be defaulted.
   displayName: Application Hostname
   name: APPLICATION_DOMAIN
-  value: 'promotion-restapi.paas-np.am.lilly.com'
-- description: A secret string used to configure the GitHub webhook.
-  displayName: GitHub Webhook Secret
-  value: sshsecret
-  name: GITHUB_WEBHOOK_SECRET
 - description: Relative path to Gunicorn configuration file (optional).
   displayName: Application Configuration File Path
   name: APP_CONFIG
@@ -301,11 +288,10 @@ parameters:
 - name: PIP_PROXY
   displayName: PIP PROXY
   description: PIP environment variable for proxy
-  value: '40.0.40.10:9000'
 - name: DEBUG
   displayName: Django Debug settings variable
-  description: Django Debug settings variable. If left unset it will be off (False)
-  value: 'off'
+  description: Django Debug settings variable. If left unset it will be True (on)
+  value: 'on'
 - description: Allowed Host for Django Setting
   name: ALLOWED_HOSTS
   displayName: Allowed Hosts
@@ -314,18 +300,6 @@ parameters:
   name: UPGRADE_PIP_TO_LATEST
   displayName: Upgrade pip to latest
   value: 'any_value_example_yes'
-- name: OPENSHIFT_MASTER_POC
-  description: The OpenShift POC master hostname and port
-  displayName: OpenShift POC master hostname and port
-  required: true
-- name: OPENSHIFT_MASTER_NP
-  displayName: OpenShift NP master hostname and port
-  description: The OpenShift NP master hostname and port
-  required: true
-- name: OPENSHIFT_MASTER_PRD
-  displayName: OpenShift PRD master hostname and port
-  description: The OpenShift PRD master hostname and port
-  required: true
 - description: Maximum amount of memory the PostgreSQL container can use.
   displayName: Memory Limit (PostgreSQL)
   name: MEMORY_POSTGRESQL_LIMIT
@@ -352,5 +326,10 @@ parameters:
   from: '[a-zA-Z0-9]{16}'
   generate: expression
   name: DATABASE_PASSWORD
+- description: A secret string used to configure the GitHub webhook.
+  displayName: GitHub Webhook Secret
+  from: '[a-zA-Z0-9]{40}'
+  generate: expression
+  name: GITHUB_WEBHOOK_SECRET
 
 # vim: ai et ts=2 sts=2 sw=2 nu
