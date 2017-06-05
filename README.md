@@ -719,6 +719,15 @@ class101   class101-youruserid-class101.fqdn             class101   <all>
 
 ```
 
+* If you use the postgresql template your pods will look like this
+```
+shell> oc get pods
+NAME                 READY     STATUS      RESTARTS   AGE
+class101-1-0hoo2     1/1       Running     0          4m
+class101-1-build     0/1       Completed   0          6m
+postgresql-1-9f7dj   1/1       Running     0          6m
+```
+
 * When you are all done, delete your project.  Thank you!
 ```
 # show your projectname
