@@ -529,13 +529,14 @@ urlpatterns = [
 ```
 
 
-* Add gunicorn to requirements.txt
+* Add gunicorn and whitenoise to requirements.txt
 
 ```
 shell> pwd
 shell> ~/class101/project
 
-echo gunicorn >> requirements.txt
+shell> echo gunicorn >> requirements.txt
+shell> echo "whitenoise" >> requirements.txt
 
 # If you haven't sourced you file, remember to do this
 shell> source ~/.virtualenvs/class101/bin/activate
@@ -558,6 +559,17 @@ shell> wget <fill in here>
 
 ```
 
+* Update project/settings.py, adding whitenoise
+
+```
+# add this whitenoise line right below the SecurityMiddleware line
+
+MIDDLEWARE = [
+    'django.middleware.security.SecurityMiddleware',
+    'whitenoise.middleware.WhiteNoiseMiddleware',
+    ....
+        
+```
 * Update project/settings.py to allow for databases other than sqlite
 
 ```
@@ -611,7 +623,7 @@ def config():
 
 shell> pwd
 ~/class101/project
-shell> tree -I "*pyc"
+shell> tree -I "pyc"
 .
 |-- dashboard
 |   |-- admin.py
@@ -642,6 +654,65 @@ shell> tree -I "*pyc"
 `-- wsgi.py
 
 ```
+
+* git add, commit and push
+
+```
+shell> git add openshift project/database.py
+shell> git commit -am "files for openhsift updated"
+shell> git push
+```
+
+* Start openshift project, app, etc.
+
+```
+shell> oc new-project youruserid-class101
+shell> export PIP_PROXY=<ip:port>; oc new-app --param=PIP_PROXY=${PIP_PROXY} -f openshift/templates/class101.yaml
+
+shell> oc get pods
+shell> oc logs -f bc/class101
+
+shell> oc get pods -w
+NAME                READY     STATUS              RESTARTS   AGE
+class101-1-3k1ec    0/1       ContainerCreating   0          3s
+class101-1-build    0/1       Completed           0          2m
+class101-1-deploy   1/1       Running             0          13s
+
+NAME               READY     STATUS    RESTARTS   AGE
+class101-1-3k1ec   0/1       Running   0          8s
+
+class101-1-3k1ec   1/1       Running   0         21s
+
+class101-1-deploy   0/1       Completed   0         33s
+class101-1-deploy   0/1       Terminating   0         33s
+class101-1-deploy   0/1       Terminating   0         33s
+
+
+^Cshell>
+
+shell> oc get pods
+NAME               READY     STATUS      RESTARTS   AGE
+class101-1-3k1ec   1/1       Running     0          9m
+class101-1-build   0/1       Completed   0          12m
+
+shell> oc rsh class101-1-3k1ec
+(app-root)sh-4.2$
+(app-root)sh-4.2$ python manage.py createsuperuser
+Username: boohoo
+Email address: a@b.com
+Password:
+Password (again):
+Superuser created successfully.
+exit
+
+shell> oc get routes
+NAME       HOST/PORT                                         PATH      SERVICES   PORT      TERMINATION
+class101   class101-youruserid-class101.fqdn             class101   <all>
+
+# Open your browser and navigate to the above /admin and add some IPs
+
+```
+
 
 * Instructions from Chris will go here
 

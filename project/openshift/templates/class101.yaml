@@ -56,8 +56,6 @@ objects:
         ref: ${SOURCE_REPOSITORY_REF}
         uri: ${SOURCE_REPOSITORY_URL}
       type: Git
-      sourceSecret:
-        name: ${GITHUB_WEBHOOK_SECRET}
     strategy:
       sourceStrategy:
         env:
@@ -206,5 +204,10 @@ parameters:
   name: UPGRADE_PIP_TO_LATEST
   displayName: Upgrade pip to latest
   value: 'any_value_example_yes'
+- description: A secret string used to configure the GitHub webhook.
+  displayName: GitHub Webhook Secret
+  from: '[a-zA-Z0-9]{40}'
+  generate: expression
+  name: GITHUB_WEBHOOK_SECRET
 
 # vim: ai et ts=2 sts=2 sw=2 nu
