@@ -671,6 +671,19 @@ shell> oc login https://fqdn:8443 -u youruserid
 shell> oc new-project youruserid-class101
 shell> export PIP_PROXY=<ip:port>; oc new-app --param=PIP_PROXY=${PIP_PROXY} -f openshift/templates/class101.yaml
 
+# Start of alternate solutions, if you haven't downloade the yaml template and you want to pull 
+# directly from github
+
+# proxy for curl:
+shell> export https_proxy=<ip:port>
+
+# proxy for inside the running container so pip will work
+shell> export PIP_PROXY=<ip:port>
+
+# pull the template, process (insert PIP_PROXY) and start a new-app
+shell> oc process -f <(curl -sL  https://raw.githubusercontent.com/johnedstone/class101/master/project/openshift/templates/class101.yaml) --param=PIP_PROXY=$PIP_PROXY | oc create -f -
+# End of alternate solution
+
 # Note errors
 shell> oc delete all --all
 # Start again with
